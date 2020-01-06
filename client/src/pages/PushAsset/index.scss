@@ -1,0 +1,38 @@
+.steps-content {
+  margin-top: 20px;
+  border: 1px dashed #e9e9e9;
+  border-radius: 6px;
+  background-color: #fafafa;
+  min-height: 200px;
+  text-align: center;
+}
+
+.steps-action {
+  margin-top: 24px;
+}
+
+.ant-steps-item {
+  text-align: left;
+}
+
+.content-new {
+  padding-top: 170px;
+  width: 40%;
+  margin: 0 auto;
+}
+
+.display-none {
+  display: none;
+}
+
+.has-error > .message-err-custom {
+  display: block;
+}
+
+@media all and (max-width: 768px) {
+  .content-new {
+    padding-top: 170px;
+    width: 85%;
+    margin: 0 auto;
+  }
+}
