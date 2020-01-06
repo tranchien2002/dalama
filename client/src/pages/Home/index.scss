@@ -1,0 +1,80 @@
+// Input search
+.flex-form input[type='submit'] {
+  border-radius: 0 5px 5px 0;
+  background: #ef3f5a;
+  border: 1px solid #ef3f5a;
+  color: #fff;
+  padding: 0 30px;
+  cursor: pointer;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.flex-form input[type='submit']:hover {
+  background: #d73851;
+  border: 1px solid #d73851;
+}
+
+.flex-form input[type='search'] {
+  border-radius: 5px 0 0 5px;
+}
+
+.flex-form {
+  border-radius: 5px;
+  display: -webkit-box;
+  display: flex;
+  position: relative;
+  width: 500px;
+  box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.flex-form > * {
+  border: 0;
+  padding: 0 0 0 10px;
+  background: #fff;
+  line-height: 50px;
+  font-size: 1rem;
+  border-radius: 0;
+  outline: 0;
+  -webkit-appearance: none;
+}
+
+input[type='search'] {
+  flex-basis: 500px;
+}
+
+@media all and (max-width: 800px) {
+  .flex-form {
+    width: 100%;
+  }
+
+  .flex-form input[type='search'] {
+    flex-basis: 100%;
+  }
+
+  .flex-form > * {
+    font-size: 0.9rem;
+  }
+}
+
+@media all and (max-width: 360px) {
+  .flex-form {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+  }
+
+  .flex-form input[type='search'] {
+    flex-basis: 0;
+  }
+  .flex-form input[type='submit'] {
+    border-radius: 5px;
+  }
+
+  .flex-form input[type='search'] {
+    border-radius: 5px;
+  }
+}
