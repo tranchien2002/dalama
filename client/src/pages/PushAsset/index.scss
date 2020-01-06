@@ -20,6 +20,11 @@
   width: 40%;
   margin: 0 auto;
 }
+.box-shadow {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 
 .display-none {
   display: none;
@@ -27,6 +32,10 @@
 
 .has-error > .message-err-custom {
   display: block;
+}
+
+.ant-spin-nested-loading > div > .ant-spin {
+  max-height: none;
 }
 
 @media all and (max-width: 768px) {
