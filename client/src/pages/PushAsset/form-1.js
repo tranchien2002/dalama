@@ -10,9 +10,16 @@ const Form1 = Form.create({ name: 'form_1' })(
       super(props);
       this.state = {
         typeChooseFile: 1,
-        listUrl: []
+        listUrl: props.file
       };
     }
+
+    componentDidMount() {
+      this.props.form.setFieldsValue({
+        ['file']: this.props.file
+      });
+    }
+
     addLink = async () => {
       let url = document.getElementById('url').value;
       var expression = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/;
@@ -22,8 +29,8 @@ const Form1 = Form.create({ name: 'form_1' })(
         var listUrl = this.state.listUrl;
         listUrl.push(url);
         this.setState({ listUrl });
-        await this.setState({ typeChooseFile: 2 });
-        await this.setState({ typeChooseFile: 1 });
+        this.setState({ typeChooseFile: 2 });
+        this.setState({ typeChooseFile: 1 });
         this.props.form.setFieldsValue({
           ['file']: this.state.listUrl
         });
@@ -33,7 +40,7 @@ const Form1 = Form.create({ name: 'form_1' })(
     };
 
     render() {
-      const { form } = this.props;
+      const { form, title } = this.props;
       const { getFieldDecorator } = form;
       return (
         <div className='ant-modal-body'>
@@ -41,6 +48,7 @@ const Form1 = Form.create({ name: 'form_1' })(
             <h2 className='ant-typography'>Essentials</h2>
             <Form.Item label='Title'>
               {getFieldDecorator('title', {
+                initialValue: title,
                 rules: [{ required: true, message: 'Please input the Title of Asset!' }]
               })(<Input />)}
             </Form.Item>
