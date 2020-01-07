@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './index.scss';
-import { Steps, Button, message, Layout, Icon, Spin, Switch, Alert } from 'antd';
-import HeaderPage from 'components/HeaderPage';
+import { Steps, Button, message, Layout, Icon, Spin } from 'antd';
 import Form1 from './form-1';
 import Form2 from './form-2';
 import Form3 from './form-3';
@@ -114,7 +113,6 @@ class PushAsset extends Component {
     return (
       <div>
         <Spin spinning={this.state.loading} indicator={antIcon}>
-          <HeaderPage />
           <Content className='content-new'>
             <div className='box-shadow'>
               <Steps type='navigation' size='small' current={current} style={stepStyle}>
@@ -134,7 +132,6 @@ class PushAsset extends Component {
                 />
               </div>
               <div
-                className='steps-content'
                 className={current === 1 ? 'steps-content' : 'steps-content display-none'}
                 id='step-2'
               >
@@ -146,7 +143,6 @@ class PushAsset extends Component {
                 />
               </div>
               <div
-                className='steps-content'
                 className={current === 2 ? 'steps-content' : 'steps-content display-none'}
                 id='step-3'
               >

@@ -32,11 +32,23 @@
 }
 
 .text-align-left {
-  text-align: left;
+  text-align: left !important;
 }
 
 .text-align-right {
-  text-align: right;
+  text-align: right !important;
+}
+.text-align-center {
+  text-align: center !important;
+}
+.text-align-center {
+  text-align: center !important;
+}
+.text-align-center {
+  text-align: center !important;
+}
+.text-align-justify {
+  text-align: justify !important;
 }
 
 .cursor-pointer {

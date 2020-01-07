@@ -150,7 +150,8 @@ header ul {
 /*** Hero Section Styles ***/
 #hero-section {
   background-color: $header-bg;
-  @include object(100vw, 70vh, null);
+  // @include object(100vw, 70vh, null);
+  padding: 250px 0px 100px 0px;
   @include center;
 }
 
@@ -176,14 +177,14 @@ header ul {
 
 /*** Section Styles ***/
 section {
-  @include object(100vw, calc(100vh - 100px), null);
+  @include object(100vw, auto, null);
   display: flex;
   justify-content: center;
   &:nth-child(odd) {
     background: $pink;
   }
   &:nth-child(even) {
-    background: $aqua;
+    background: #c9f4f9;
   }
 }
 

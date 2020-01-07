@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as actions from 'actions';
+import { Link } from 'react-router-dom';
 import './index.scss';
 
 function HeaderPage() {
@@ -10,15 +9,18 @@ function HeaderPage() {
   const [menuToggle, setMenuToggle] = useState(true);
 
   useEffect(() => {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 200) {
-        setClassHeader('navShadow');
-        document.getElementById('ul-subMenu').classList.add('top-100');
-      } else {
-        setClassHeader('');
-        document.getElementById('ul-subMenu').classList.remove('top-100');
-      }
-    });
+    let scrollPage = () => {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 200) {
+          setClassHeader('navShadow');
+          document.getElementById('ul-subMenu').classList.add('top-100');
+        } else {
+          setClassHeader('');
+          document.getElementById('ul-subMenu').classList.remove('top-100');
+        }
+      });
+    };
+    scrollPage();
   });
 
   function handleMenuToggle(e) {
@@ -52,16 +54,16 @@ function HeaderPage() {
           </div>
           <ul className={'ul-menu-toggle ' + classShowMenu} id='ul-subMenu'>
             <li>
-              <a href='#section00' />
+              <Link to='/'>Home</Link>
             </li>
             <li>
-              <a href='#section01' />
+              <Link to='/new-asset'>Publish</Link>
             </li>
             <li>
-              <a href='#section02' />
+              <Link to='/'>MyAssets</Link>
             </li>
             <li>
-              <a href='#section03' />
+              <Link to='/'></Link>
             </li>
           </ul>
         </div>

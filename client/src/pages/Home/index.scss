@@ -58,6 +58,31 @@ input[type='search'] {
   }
 }
 
+.content-home {
+  min-height: 500px;
+  padding: 50px;
+  width: 75%;
+  margin: 0 auto;
+}
+
+.col-card-home {
+  margin: 20px 0;
+  cursor: pointer;
+}
+.card-home {
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.01), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+@media all and (max-width: 768px) {
+  .content-home {
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+  }
+}
+
 @media all and (max-width: 360px) {
   .flex-form {
     display: -webkit-box;
