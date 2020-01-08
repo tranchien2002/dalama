@@ -1,5 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+### Connect Nile testnet
+
+https://docs.oceanprotocol.com/tutorials/connect-to-networks/#connect-to-the-nile-testnet
+
 ## Available Scripts
 
 In the project directory, you can run:

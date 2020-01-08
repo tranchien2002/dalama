@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import './index.scss';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { Steps, Button, message, Layout, Icon, Spin } from 'antd';
 import Form1 from './form-1';
 import Form2 from './form-2';
 import Form3 from './form-3';
+import AssetModel from 'models/AssetModel';
 
 const { Step } = Steps;
 const { Content } = Layout;
@@ -20,7 +23,7 @@ class PushAsset extends Component {
       current: 0,
       newAsset: {
         title: '',
-        urlAsset: [],
+        files: [],
         description: '',
         category: '',
         creationDate: '',
@@ -71,7 +74,7 @@ class PushAsset extends Component {
       let newAsset = this.state.newAsset;
       if (this.state.current === 0) {
         newAsset.title = values.title;
-        newAsset.urlAsset = values.file;
+        newAsset.files = values.file;
         this.setState({ newAsset: newAsset });
       } else if (this.state.current === 1) {
         newAsset.description = values.description;
@@ -98,13 +101,37 @@ class PushAsset extends Component {
     this.form3Ref = formRef;
   };
 
-  completeForm = () => {
-    console.log(this.state.newAsset);
+  completeForm = async () => {
+    this.next();
+    let files = this.state.newAsset.files.map(({ found, ...keepAttrs }) => keepAttrs);
     this.setState({ loading: true });
-    setTimeout(() => {
+
+    const newAsset = {
+      main: Object.assign(AssetModel.main, {
+        type: 'dataset',
+        name: this.state.newAsset.title,
+        dateCreated: new Date(this.state.newAsset.creationDate).toISOString().split('.')[0] + 'Z',
+        author: this.state.newAsset.author,
+        license: this.state.newAsset.license,
+        files
+      }),
+      additionalInformation: Object.assign(AssetModel.additionalInformation, {
+        description: this.state.newAsset.description,
+        copyrightHolder: this.state.newAsset.copyrightHolder,
+        categories: [this.state.newAsset.category, 'dalama']
+      })
+    };
+    try {
+      this.setState({ loading: true });
+      const accounts = await this.props.ocean.accounts.list();
+      const asset = await this.props.ocean.assets.create(newAsset, accounts[0]);
+      console.log(asset);
       this.setState({ loading: false });
       message.success('Processing complete!');
-    }, 3000);
+    } catch (e) {
+      this.setState({ loading: false });
+      console.error(e.message);
+    }
   };
 
   render() {
@@ -128,7 +155,7 @@ class PushAsset extends Component {
                 <Form1
                   wrappedComponentRef={this.refForm1}
                   title={this.state.newAsset.title}
-                  file={this.state.newAsset.urlAsset}
+                  file={this.state.newAsset.files}
                 />
               </div>
               <div
@@ -177,5 +204,12 @@ class PushAsset extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    ocean: state.ocean,
+    account: state.account,
+    test: state
+  };
+};
 
-export default PushAsset;
+export default compose(connect(mapStateToProps))(PushAsset);

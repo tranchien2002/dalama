@@ -1,5 +1,7 @@
 import React from 'react';
 import { Button, Icon, Form, Input, Tabs, Upload } from 'antd';
+import axios from 'axios';
+import cleanupContentType from 'utils/cleanUpContentType.js';
 
 const { TabPane } = Tabs;
 
@@ -14,11 +16,44 @@ const Form1 = Form.create({ name: 'form_1' })(
       };
     }
 
+    signal = axios.CancelToken.source();
+
     componentDidMount() {
       this.props.form.setFieldsValue({
         file: this.props.file
       });
     }
+
+    getLink = async (url) => {
+      let file = {
+        url,
+        contentType: '',
+        found: false
+      };
+
+      try {
+        const response = await axios({
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          url: 'https://commons-server.oceanprotocol.com/api/v1/urlcheck',
+          data: { url },
+          cancelToken: this.signal.token
+        });
+
+        let { contentLength, contentType, found } = response.data.result;
+        if (contentLength) file.contentLength = contentLength;
+        if (contentType) {
+          file.contentType = contentType;
+          file.compression = cleanupContentType(contentType);
+        }
+
+        file.found = found;
+
+        return file;
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     addLink = async () => {
       let url = document.getElementById('url').value;
@@ -27,13 +62,15 @@ const Form1 = Form.create({ name: 'form_1' })(
       if (regex.test(url)) {
         document.getElementById('url').parentElement.classList.remove('has-error');
         var listUrl = this.state.listUrl;
-        listUrl.push(url);
-        this.setState({ listUrl });
+        const file = await this.getLink(url);
+        listUrl.push(file);
+        this.setState(listUrl);
         this.setState({ typeChooseFile: 2 });
         this.setState({ typeChooseFile: 1 });
         this.props.form.setFieldsValue({
           file: this.state.listUrl
         });
+        console.log(this.state.listUrl);
       } else {
         document.getElementById('url').parentElement.classList.add('has-error');
       }
@@ -46,7 +83,7 @@ const Form1 = Form.create({ name: 'form_1' })(
         <div className='ant-modal-body'>
           <Form layout='vertical'>
             <h2 className='ant-typography'>Essentials</h2>
-            <Form.Item label='Title'>
+            <Form.Item label='Name'>
               {getFieldDecorator('title', {
                 initialValue: title,
                 rules: [{ required: true, message: 'Please input the Title of Asset!' }]
@@ -56,13 +93,13 @@ const Form1 = Form.create({ name: 'form_1' })(
               {getFieldDecorator('file', {
                 rules: [{ required: true, message: 'Please input the File of Asset!' }]
               })(<Input className='display-none' />)}
-              {this.state.listUrl.map((url, index) => (
+              {this.state.listUrl.map((file, index) => (
                 <div key={index} className='pl-3'>
                   <hr />
                   <div className='row mt-2 mb-2'>
                     <div className='text-align-left col-10'>
-                      <a href={url} target='_blank' rel='noopener noreferrer'>
-                        {url}
+                      <a href={file.url} target='_blank' rel='noopener noreferrer'>
+                        {file.url}
                       </a>
                     </div>
                     <div
