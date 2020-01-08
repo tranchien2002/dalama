@@ -1,5 +1,7 @@
 import getWeb3 from 'utils/getWeb3';
 import { Stitch, AnonymousCredential, RemoteMongoClient } from 'mongodb-stitch-browser-sdk';
+import { Ocean } from '@oceanprotocol/squid';
+import { aquariusUri, brizoUri, brizoAddress, nodeUri, secretStoreUri } from 'config';
 
 const client = Stitch.initializeDefaultAppClient('ocean-assets-zduhd');
 const mongodb = client.getServiceClient(RemoteMongoClient.factory, 'mongodb-atlas');
@@ -28,8 +30,18 @@ export const WEB3_CONNECT = 'WEB3_CONNECT';
 export const web3Connect = () => async (dispatch) => {
   const web3 = await getWeb3();
   const accounts = await web3.eth.getAccounts();
-  if (web3.currentProvider.networkVersion !== '8995') {
-    alert('Unknown network, please change network to Ropsten network');
+  const config = {
+    web3Provider: web3,
+    nodeUri,
+    aquariusUri,
+    brizoUri,
+    brizoAddress,
+    secretStoreUri,
+    verbose: true
+  };
+  const ocean = await Ocean.getInstance(config);
+  if (web3.currentProvider.networkVersion !== '84635') {
+    alert('Unknown network, please change network to Pacific network');
     return;
   }
   if (accounts.length > 0) {
@@ -37,7 +49,8 @@ export const web3Connect = () => async (dispatch) => {
     dispatch({
       type: WEB3_CONNECT,
       web3,
-      account
+      account,
+      ocean
     });
   } else {
     console.log('Account not found');

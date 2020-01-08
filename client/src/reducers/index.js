@@ -2,7 +2,9 @@ import * as actions from 'actions';
 
 const initialState = {
   web3: null,
-  listAssets: []
+  listAssets: [],
+  ocean: null,
+  account: null
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -11,7 +13,8 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         web3: action.web3,
-        account: action.account
+        account: action.account,
+        ocean: action.ocean
       };
     case actions.FETCH_ASSETS:
       console.log(action.assets);
