@@ -1,0 +1,162 @@
+.content-detail {
+  padding-top: 170px;
+  width: 50%;
+  margin: 0 auto;
+  min-height: 900px;
+
+  .detail-title {
+    margin-bottom: 3rem;
+    .detail-title-h1 {
+      font-size: 2.5rem;
+      font-weight: bolder;
+      text-align: left;
+    }
+    .detail-image-header {
+      height: 300px;
+    }
+  }
+
+  .detail-description {
+    margin-top: 1.5rem;
+    margin-bottom: 3rem;
+    .detail-description-date {
+      text-align: left;
+      & > p {
+        margin-bottom: 0;
+      }
+    }
+    .detail-description-category {
+      text-align: center;
+    }
+    .detail-description-numberFile {
+      text-align: right;
+      & > p {
+        margin-bottom: 0;
+      }
+    }
+    .detail-description-content {
+      margin-top: 2.5rem;
+      & > h2 {
+        font-size: 1.3rem;
+      }
+    }
+  }
+  .detail-goals {
+    margin-top: 1rem;
+    text-align: left;
+    font-size: 1.3rem;
+  }
+
+  .detail-author {
+    margin-top: 3rem;
+    & .ant-card-body {
+      padding: 2.1rem;
+    }
+    .detail-author-author {
+      h3 {
+        margin-bottom: 0;
+      }
+      p {
+        font-size: 1rem;
+        margin-bottom: 0;
+      }
+    }
+    .detail-author-license {
+      margin-top: 1.5rem;
+      h3 {
+        margin-bottom: 0;
+      }
+      p {
+        font-size: 1rem;
+        margin-bottom: 0;
+      }
+    }
+    .detail-author-did {
+      margin-top: 1.5rem;
+      h3 {
+        margin-bottom: 0;
+      }
+      p {
+        font-size: 1rem;
+        overflow-wrap: break-word;
+      }
+    }
+  }
+  .detail-files {
+    margin-top: 2rem;
+    padding: 2rem;
+    .detail-files-file {
+      width: 8.5rem;
+      margin: 0 auto;
+      margin-bottom: 3rem;
+      .detail-files-file-capacity {
+        background-image: url('../../assets/images/file-default.png');
+        background-size: 100%;
+        background-repeat: no-repeat;
+        height: 8.5rem;
+        width: 8.5rem;
+        padding: 2rem;
+        margin-bottom: 0.5rem;
+        vertical-align: baseline;
+      }
+      p {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+        font-weight: bold;
+        text-align: left;
+      }
+    }
+  }
+  .detail-upload {
+    text-align: left;
+    & p {
+      text-align: left;
+      margin-bottom: 0;
+    }
+    & ul {
+      margin: 0;
+    }
+    margin-bottom: 6rem;
+  }
+}
+
+.btn-submit-asset {
+  padding: 1rem;
+}
+
+@media all and (max-width: 768px) {
+  .content-detail {
+    padding-top: 170px;
+    width: 85%;
+    margin: 0 auto;
+    .detail-title {
+      .detail-image-header {
+        height: auto;
+      }
+      .detail-title-h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .detail-description {
+      .detail-description-date {
+        text-align: left;
+      }
+      .detail-description-category {
+        text-align: left;
+      }
+      .detail-description-numberFile {
+        text-align: left;
+      }
+      .detail-description-content {
+        & > h2 {
+          text-align: left !important;
+          font-size: 1.2rem;
+        }
+      }
+    }
+    .detail-goals {
+      font-size: 1.2rem;
+    }
+  }
+}

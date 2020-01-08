@@ -16,7 +16,7 @@ const Form1 = Form.create({ name: 'form_1' })(
 
     componentDidMount() {
       this.props.form.setFieldsValue({
-        ['file']: this.props.file
+        file: this.props.file
       });
     }
 
@@ -32,7 +32,7 @@ const Form1 = Form.create({ name: 'form_1' })(
         this.setState({ typeChooseFile: 2 });
         this.setState({ typeChooseFile: 1 });
         this.props.form.setFieldsValue({
-          ['file']: this.state.listUrl
+          file: this.state.listUrl
         });
       } else {
         document.getElementById('url').parentElement.classList.add('has-error');
@@ -61,7 +61,7 @@ const Form1 = Form.create({ name: 'form_1' })(
                   <hr />
                   <div className='row mt-2 mb-2'>
                     <div className='text-align-left col-10'>
-                      <a href={url} target='_blank'>
+                      <a href={url} target='_blank' rel='noopener noreferrer'>
                         {url}
                       </a>
                     </div>
@@ -72,7 +72,7 @@ const Form1 = Form.create({ name: 'form_1' })(
                         listUrl.splice(index, 1);
                         this.setState({ listUrl });
                         this.props.form.setFieldsValue({
-                          ['file']: this.state.listUrl
+                          file: this.state.listUrl
                         });
                       }}
                     >

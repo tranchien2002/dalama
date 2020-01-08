@@ -1,0 +1,21 @@
+.footer-home {
+  width: 100vw;
+}
+
+.div-footer {
+  border-top: 1px solid gainsboro;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.ant-layout-footer {
+  padding: 0px 50px 15px 50px;
+  background: none;
+}
+
+@media all and (max-width: 768px) {
+  .ant-layout-footer {
+    padding: 0px 20px 15px 20px;
+    background: none;
+  }
+}
