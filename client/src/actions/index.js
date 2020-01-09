@@ -8,7 +8,7 @@ const mongodb = client.getServiceClient(RemoteMongoClient.factory, 'mongodb-atla
 const db = mongodb.db('ocean');
 
 export const FETCH_ASSETS = 'FETCH_ASSETS';
-export const fetchAssest = () => async (dispatch) => {
+export const fetchAssest = () => async dispatch => {
   client.auth
     .loginWithCredential(new AnonymousCredential())
     .then(
@@ -16,7 +16,7 @@ export const fetchAssest = () => async (dispatch) => {
         .collection('assets')
         .find({}, { limit: 1000 })
         .asArray()
-        .then((assets) => {
+        .then(assets => {
           dispatch({
             type: FETCH_ASSETS,
             assets
@@ -27,7 +27,7 @@ export const fetchAssest = () => async (dispatch) => {
 };
 
 export const WEB3_CONNECT = 'WEB3_CONNECT';
-export const web3Connect = () => async (dispatch) => {
+export const web3Connect = () => async dispatch => {
   const web3 = await getWeb3();
   const accounts = await web3.eth.getAccounts();
   const config = {
@@ -40,7 +40,7 @@ export const web3Connect = () => async (dispatch) => {
     verbose: true
   };
   const ocean = await Ocean.getInstance(config);
-  if (web3.currentProvider.networkVersion !== '84635') {
+  if (web3.currentProvider.networkVersion !== '8995') {
     alert('Unknown network, please change network to Pacific network');
     return;
   }

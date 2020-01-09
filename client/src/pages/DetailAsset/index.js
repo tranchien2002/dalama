@@ -4,6 +4,8 @@ import { Layout, Button, Comment, Avatar, Input, List, Form, Tabs, Icon, Upload 
 import { Link } from 'react-router-dom';
 import { Card } from 'antd';
 import moment from 'moment';
+import { saveAs } from 'file-saver';
+var JSZip = require('jszip');
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -14,7 +16,7 @@ const CommentList = ({ comments }) => (
     dataSource={comments}
     header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
     itemLayout='horizontal'
-    renderItem={(props) => <Comment {...props} />}
+    renderItem={props => <Comment {...props} />}
   />
 );
 
@@ -53,7 +55,71 @@ class DetailAsset extends Component {
       submitting: false,
       value: ''
     };
+
+    this.handleUpload = this.handleUpload.bind(this);
   }
+
+  // Ant Design Upload handler
+  // handleUpload = info => {
+  //   let demoZip = new JSZip();
+  //   let dataFile = info.file;
+  //   JSZip.loadAsync(dataFile).then(
+  //     function(zip) {
+  //       zip.forEach(function(relativePath, zipEntry) {
+  //         console.log(relativePath);
+  //         if (zipEntry.name.includes('.png')) {
+  //           demoZip.file(zipEntry.name, zipEntry._data);
+  //         }
+  //       });
+  //       demoZip.generateAsync({ type: 'blob' }).then(blob => {
+  //         saveAs(blob, 'all_pngs.zip');
+  //       });
+  //     },
+  //     function(e) {
+  //       alert('error while read file');
+  //     }
+  //   );
+  // };
+
+  handleUpload = e => {
+    let demoZip = new JSZip();
+    let dataFile = e.target.files[0];
+    JSZip.loadAsync(dataFile).then(
+      function(zip) {
+        let allFileNames = [];
+        zip.forEach(function(relativePath, zipEntry) {
+          // _ la MACOS auto file
+          if (zipEntry.name[0] !== '_' && zipEntry.name.includes('.png')) {
+            allFileNames.push(zipEntry.name);
+          }
+        });
+        if (allFileNames.length < 1) return;
+        let demoFileCount = Math.max(1, parseInt(allFileNames.length / 4));
+        let demoFileNames = allFileNames
+          .sort(() => {
+            return 0.5 - Math.random();
+          })
+          .slice(0, demoFileCount);
+        console.log(allFileNames.length, demoFileCount, demoFileNames);
+
+        zip.forEach(function(relativePath, zipEntry) {
+          if (demoFileNames.includes(zipEntry.name)) {
+            demoZip.file(zipEntry.name, zipEntry._data);
+          }
+        });
+        demoZip.generateAsync({ type: 'blob' }).then(blob => {
+          // TODO: day la file upload
+          // https://stackoverflow.com/questions/46581488/how-to-download-and-upload-zip-file-without-saving-to-disk
+          const file = new File(blob, 'demoZip.zip', { type: 'application/zip' });
+          // UPLOAD HERE
+          // saveAs(blob, 'demoFile.zip');
+        });
+      },
+      function(e) {
+        alert('error while read file');
+      }
+    );
+  };
 
   handleSubmit = () => {
     if (!this.state.value) {
@@ -81,7 +147,7 @@ class DetailAsset extends Component {
     }, 1000);
   };
 
-  handleChange = (e) => {
+  handleChange = e => {
     this.setState({
       value: e.target.value
     });
@@ -89,6 +155,7 @@ class DetailAsset extends Component {
 
   render() {
     const { comments, submitting, value } = this.state;
+
     return (
       <div>
         <Content className='content-detail'>
@@ -205,11 +272,9 @@ class DetailAsset extends Component {
                       </Form.Item>
                     </div>
                     <div className='col-md-6'>
+                      <input type='file' onChange={this.handleUpload} />
                       <Form.Item label='Files'>
-                        <Upload
-                          action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
-                          listType='picture'
-                        >
+                        <Upload onChange={this.handleUpload} listType='picture'>
                           <Button>
                             <Icon type='upload' /> Upload
                           </Button>
