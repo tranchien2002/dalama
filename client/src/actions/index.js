@@ -1,33 +1,9 @@
 import getWeb3 from 'utils/getWeb3';
-import { Stitch, AnonymousCredential, RemoteMongoClient } from 'mongodb-stitch-browser-sdk';
 import { Ocean } from '@oceanprotocol/squid';
 import { aquariusUri, brizoUri, brizoAddress, nodeUri, secretStoreUri } from 'config';
 
-const client = Stitch.initializeDefaultAppClient('ocean-assets-zduhd');
-const mongodb = client.getServiceClient(RemoteMongoClient.factory, 'mongodb-atlas');
-const db = mongodb.db('ocean');
-
-export const FETCH_ASSETS = 'FETCH_ASSETS';
-export const fetchAssest = () => async dispatch => {
-  client.auth
-    .loginWithCredential(new AnonymousCredential())
-    .then(
-      db
-        .collection('assets')
-        .find({}, { limit: 1000 })
-        .asArray()
-        .then(assets => {
-          dispatch({
-            type: FETCH_ASSETS,
-            assets
-          });
-        })
-    )
-    .catch(console.error);
-};
-
 export const WEB3_CONNECT = 'WEB3_CONNECT';
-export const web3Connect = () => async dispatch => {
+export const web3Connect = () => async (dispatch) => {
   const web3 = await getWeb3();
   const accounts = await web3.eth.getAccounts();
   const config = {
@@ -54,5 +30,32 @@ export const web3Connect = () => async dispatch => {
     });
   } else {
     console.log('Account not found');
+  }
+};
+
+export const FETCH_ASSET = 'FETCH_ASSET';
+export const fetchAsset = () => async (dispatch, getState) => {
+  const state = getState();
+  const ocean = state.ocean;
+  const searchQuery = {
+    offset: 30,
+    page: 1,
+    query: {
+      categories: ['Biology']
+    },
+    sort: {
+      created: -1
+    }
+  };
+  try {
+    const search = await ocean.assets.query(searchQuery);
+    debugger;
+    console.log('assets', search.results);
+    dispatch({
+      type: FETCH_ASSET,
+      allAssets: search.results
+    });
+  } catch (e) {
+    console.log(e);
   }
 };

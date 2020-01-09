@@ -1,27 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from 'actions';
 import './index.scss';
-import { Card, Col, Row } from 'antd';
+import { Card, Col, Row, Icon, Spin } from 'antd';
 import { Link } from 'react-router-dom';
 
 const { Meta } = Card;
+const antIcon = <Icon type='loading' style={{ fontSize: 30 }} spin />;
 
 function Home() {
   const dispatch = useDispatch();
   let { listAssets } = useSelector((state) => ({
-    listAssets: state.listAssets
+    listAssets: state.allAssets
   }));
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    async function fetWeb3Init() {
+    async function fetWeb3Asset() {
+      setLoading(true);
       await dispatch(actions.web3Connect());
+      await dispatch(actions.fetchAsset());
+      setLoading(false);
     }
-    async function fetchAssest() {
-      await dispatch(actions.fetchAssest());
-    }
-    fetWeb3Init();
-    fetchAssest();
+    fetWeb3Asset();
   }, [dispatch]);
 
   return (
@@ -34,31 +36,39 @@ function Home() {
       </div>
       <section id='section00'>
         <div className='content-home'>
-          <Row gutter={16}>
-            {listAssets.map((item, index) => (
-              <Link key={index} to={'detail/' + item.stt}>
-                <Col xs={24} sm={12} md={12} lg={8} className='col-card-home'>
-                  <Card
-                    className='card-home'
-                    hoverable
-                    cover={
-                      <img
-                        alt='example'
-                        height='181px'
-                        src={
-                          index % 2 === 0
-                            ? require('assets/images/images-default-2.png')
-                            : require('assets/images/images-default-1.png')
+          <Spin spinning={loading} indicator={antIcon}>
+            <Row gutter={16}>
+              {listAssets.map((item, index) => (
+                <Link key={index} to={'detail/' + item.id}>
+                  <Col xs={24} sm={12} md={12} lg={8} className='col-card-home'>
+                    <Card
+                      className='card-home'
+                      hoverable
+                      cover={
+                        <img
+                          alt='example'
+                          height='181px'
+                          src={
+                            index % 2 === 0
+                              ? require('assets/images/images-default-2.png')
+                              : require('assets/images/images-default-1.png')
+                          }
+                        />
+                      }
+                    >
+                      <Meta
+                        title={'' + item.findServiceByType('metadata').attributes.main.name}
+                        description={
+                          'Published: ' +
+                          item.findServiceByType('metadata').attributes.main.datePublished
                         }
                       />
-                    }
-                  >
-                    <Meta title={'' + item.stt} description='www.instagram.com' />
-                  </Card>
-                </Col>
-              </Link>
-            ))}
-          </Row>
+                    </Card>
+                  </Col>
+                </Link>
+              ))}
+            </Row>
+          </Spin>
         </div>
       </section>
       {/* <FooterPage /> */}
