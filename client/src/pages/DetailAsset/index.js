@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import './index.scss';
 import { Layout, Button, Comment, Avatar, Input, List, Form, Tabs, Icon, Upload } from 'antd';
-import { Link } from 'react-router-dom';
-import { Card } from 'antd';
+import { Card, Spin } from 'antd';
 import moment from 'moment';
+import store from 'store';
+import * as actions from 'actions';
+import filesize from 'filesize';
+
 import { saveAs } from 'file-saver';
 var JSZip = require('jszip');
 
@@ -11,12 +16,14 @@ const { Content } = Layout;
 const { TextArea } = Input;
 const { TabPane } = Tabs;
 
+const antIcon = <Icon type='loading' style={{ fontSize: 30 }} spin />;
+
 const CommentList = ({ comments }) => (
   <List
     dataSource={comments}
     header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
     itemLayout='horizontal'
-    renderItem={props => <Comment {...props} />}
+    renderItem={(props) => <Comment {...props} />}
   />
 );
 
@@ -37,7 +44,6 @@ class DetailAsset extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listFiles: [1, 2, 3, 4, 5, 6],
       comments: [
         {
           author: 'Han Solo',
@@ -53,7 +59,8 @@ class DetailAsset extends Component {
         }
       ],
       submitting: false,
-      value: ''
+      value: '',
+      btnLoading: []
     };
 
     this.handleUpload = this.handleUpload.bind(this);
@@ -81,7 +88,7 @@ class DetailAsset extends Component {
   //   );
   // };
 
-  handleUpload = e => {
+  handleUpload = (e) => {
     let demoZip = new JSZip();
     let dataFile = e.target.files[0];
     JSZip.loadAsync(dataFile).then(
@@ -100,19 +107,21 @@ class DetailAsset extends Component {
             return 0.5 - Math.random();
           })
           .slice(0, demoFileCount);
-        console.log(allFileNames.length, demoFileCount, demoFileNames);
+        // console.log(allFileNames.length, demoFileCount, demoFileNames);
 
         zip.forEach(function(relativePath, zipEntry) {
           if (demoFileNames.includes(zipEntry.name)) {
             demoZip.file(zipEntry.name, zipEntry._data);
           }
         });
-        demoZip.generateAsync({ type: 'blob' }).then(blob => {
+        demoZip.generateAsync({ type: 'blob' }).then((blob) => {
+          console.log(blob);
           // TODO: day la file upload
           // https://stackoverflow.com/questions/46581488/how-to-download-and-upload-zip-file-without-saving-to-disk
-          const file = new File(blob, 'demoZip.zip', { type: 'application/zip' });
-          // UPLOAD HERE
-          // saveAs(blob, 'demoFile.zip');
+          // https://stackoverflow.com/questions/45512546/failed-to-construct-file-iterator-getter-is-not-callable-in-chrome-60-when-us
+          const file = new File([blob], 'demoZip.zip', { type: 'application/zip' });
+          saveAs(file);
+          console.log(file);
         });
       },
       function(e) {
@@ -147,20 +156,69 @@ class DetailAsset extends Component {
     }, 1000);
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({
-      value: e.target.value
+      value: e.target.value,
+      detailAsset: null,
+      loading: false
     });
   };
 
+  purchaseAsset = async (ddo, index) => {
+    const ocean = this.props.ocean;
+    try {
+      const accounts = await ocean.accounts.list();
+      const service = ddo.findServiceByType('access');
+      const agreements = await ocean.keeper.conditions.accessSecretStoreCondition.getGrantedDidByConsumer(
+        accounts[0].id
+      );
+      const agreement = agreements.find((element) => {
+        return element.did === ddo.id;
+      });
+      let agreementId;
+      if (agreement) {
+        ({ agreementId } = agreement);
+      } else {
+        agreementId = await ocean.assets.order(ddo.id, service.index, accounts[0]);
+      }
+      const path = await ocean.assets.consume(
+        agreementId,
+        ddo.id,
+        service.index,
+        accounts[0],
+        '',
+        index
+      );
+      this.setState({
+        btnLoading: this.state.btnLoading.filter(function(ele) {
+          return ele != index;
+        })
+      });
+      console.log('path', path);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  async componentDidMount() {
+    let did = this.props.match.params.did;
+    this.setState({ loading: true });
+    await store.dispatch(actions.web3Connect());
+    let asset = await this.props.ocean.assets.resolve(did);
+    this.setState({ loading: false, detailAsset: asset });
+  }
+
   render() {
     const { comments, submitting, value } = this.state;
+    const { loading, detailAsset } = this.state;
 
     return (
-      <div>
+      <Spin spinning={loading} indicator={antIcon}>
         <Content className='content-detail'>
           <div className='detail-title'>
-            <h1 className='detail-title-h1'>Title Of Asset</h1>
+            <h1 className='detail-title-h1'>
+              {detailAsset ? detailAsset.service['0'].attributes.main.name : null}
+            </h1>
             <img
               alt=''
               src={require('assets/images/asset-0.png')}
@@ -171,33 +229,25 @@ class DetailAsset extends Component {
           <div className='detail-description'>
             <div className='row'>
               <div className='col-md-4 detail-description-date'>
-                <p>01/01/2020</p>
+                <p>{detailAsset ? detailAsset.service['0'].attributes.main.dateCreated : null}</p>
               </div>
-              <div className='col-md-4 detail-description-category'>
-                <Link to='/'>Category</Link>
-              </div>
+              <div className='col-md-4 detail-description-category'></div>
               <div className='col-md-4 detail-description-numberFile'>
-                <p>6 Files</p>
+                <p>
+                  {detailAsset ? detailAsset.service['0'].attributes.main.files.length : null} Files
+                </p>
               </div>
             </div>
             <div className='detail-description-content'>
               <h2 className='text-align-justify'>
-                What a Waste is a global project to aggregate data on solid waste management from
-                around the world. This database features the statistics collected through the
-                effort, covering nearly all countries and over 330 cities. The metrics included
-                cover all steps from the waste management value chain, including waste generation,
-                composition, collection, and disposal, as well as information on user fees and
-                financing, the informal sector, administrative structures, public communication, and
-                legal information. The information presented is the best available based on a study
-                of current literature and limited conversations with waste agencies and authorities.
-                While there may be variations in the definitions and quality of reporting for
-                individual data points, general trends should reflect the global reality. All
-                sources and any estimations are noted.
+                {detailAsset
+                  ? detailAsset.service['0'].attributes.additionalInformation.description
+                  : null}
               </h2>
             </div>
           </div>
           <hr />
-          <h2 className='detail-goals'>Development Goals: Data Market Assets</h2>
+          {/* <h2 className='detail-goals'>Development Goals: Data Market Assets</h2> */}
           <div className='detail-author'>
             <Card className='text-align-left'>
               <div className='row detail-author-author'>
@@ -207,7 +257,7 @@ class DetailAsset extends Component {
                   </h3>
                 </div>
                 <div className='col-md-8'>
-                  <p>World Development Indicators, The World Bank</p>
+                  <p>{detailAsset ? detailAsset.service['0'].attributes.main.author : null}</p>
                 </div>
               </div>
               <div className='row detail-author-license'>
@@ -217,7 +267,7 @@ class DetailAsset extends Component {
                   </h3>
                 </div>
                 <div className='col-md-8'>
-                  <p>CC-BY 4.0</p>
+                  <p>{detailAsset ? detailAsset.service['0'].attributes.main.license : null}</p>
                 </div>
               </div>
               <div className='row detail-author-did'>
@@ -227,25 +277,35 @@ class DetailAsset extends Component {
                   </h3>
                 </div>
                 <div className='col-md-8'>
-                  <p>did:op:d00f6e8f6d184b0eb543494bd927116bedfc86eb83e24e539a5247f34c35ed33</p>
+                  <p>{detailAsset ? detailAsset.id : null}</p>
                 </div>
               </div>
             </Card>
           </div>
           <div className='detail-files row'>
-            {this.state.listFiles.map((item, index) => (
-              <div className='col-md-4 ' key={index}>
-                <div className='detail-files-file'>
-                  <div className='detail-files-file-capacity'>
-                    <p>.csv</p>
-                    <p>111.33 KB</p>
+            {detailAsset
+              ? detailAsset.service['0'].attributes.main.files.map((file, index) => (
+                  <div className='col-md-4 margin-0-auto' key={index}>
+                    <div className='detail-files-file'>
+                      <div className='detail-files-file-capacity'>
+                        <p>.{file.contentType}</p>
+                        <p>{filesize(file.contentLength)}</p>
+                      </div>
+                      <Button
+                        type='primary'
+                        icon='download'
+                        onClick={() => {
+                          this.purchaseAsset(detailAsset, file.index || 0);
+                          this.setState({ btnLoading: [...this.state.btnLoading, index] });
+                        }}
+                        loading={this.state.btnLoading.includes(index) ? true : false}
+                      >
+                        Get File
+                      </Button>
+                    </div>
                   </div>
-                  <Button type='primary' icon='download'>
-                    Get File
-                  </Button>
-                </div>
-              </div>
-            ))}
+                ))
+              : null}
           </div>
           <div className='detail-upload'>
             <h1 className='text-align-left'>Exchange - Comment</h1>
@@ -318,9 +378,15 @@ class DetailAsset extends Component {
             </Tabs>
           </div>
         </Content>
-      </div>
+      </Spin>
     );
   }
 }
 
-export default DetailAsset;
+const mapStateToProps = (state) => {
+  return {
+    ocean: state.ocean
+  };
+};
+
+export default compose(connect(mapStateToProps))(DetailAsset);

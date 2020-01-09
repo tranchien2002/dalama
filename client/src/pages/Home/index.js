@@ -22,6 +22,7 @@ function Home() {
       await dispatch(actions.web3Connect());
       await dispatch(actions.fetchAsset());
       setLoading(false);
+      console.log(listAssets);
     }
     fetWeb3Asset();
   }, [dispatch]);

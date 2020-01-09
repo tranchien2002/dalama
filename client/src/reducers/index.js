@@ -4,7 +4,8 @@ const initialState = {
   web3: null,
   ocean: null,
   account: null,
-  allAssets: []
+  allAssets: [],
+  myAssets: []
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -16,10 +17,15 @@ const rootReducer = (state = initialState, action) => {
         account: action.account,
         ocean: action.ocean
       };
-    case actions.FETCH_ASSET:
+    case actions.FETCH_ASSETS:
       return {
         ...state,
         allAssets: action.allAssets
+      };
+    case actions.GET_MY_ASSETS:
+      return {
+        ...state,
+        myAssets: action.myAssets
       };
     default:
       return state;

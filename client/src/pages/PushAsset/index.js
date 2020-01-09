@@ -7,6 +7,8 @@ import Form1 from './form-1';
 import Form2 from './form-2';
 import Form3 from './form-3';
 import AssetModel from 'models/AssetModel';
+import store from 'store';
+import * as actions from 'actions';
 
 const { Step } = Steps;
 const { Content } = Layout;
@@ -125,9 +127,10 @@ class PushAsset extends Component {
       this.setState({ loading: true });
       const accounts = await this.props.ocean.accounts.list();
       const asset = await this.props.ocean.assets.create(newAsset, accounts[0]);
-      console.log(asset);
-      this.setState({ loading: false });
+      store.dispatch(actions.insertDidToUser(accounts[0].id, asset));
       message.success('Processing complete!');
+      this.props.history.push('/my-assets');
+      this.setState({ loading: false });
     } catch (e) {
       this.setState({ loading: false });
       console.error(e.message);
