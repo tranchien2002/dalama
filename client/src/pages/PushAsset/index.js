@@ -124,13 +124,14 @@ class PushAsset extends Component {
       })
     };
     try {
-      this.setState({ loading: true });
+      // this.setState({ loading: true });
       const accounts = await this.props.ocean.accounts.list();
       const asset = await this.props.ocean.assets.create(newAsset, accounts[0]);
+      console.log('asset', asset);
       store.dispatch(actions.insertDidToUser(accounts[0].id, asset));
       message.success('Processing complete!');
       this.props.history.push('/my-assets');
-      this.setState({ loading: false });
+      // this.setState({ loading: false });
     } catch (e) {
       this.setState({ loading: false });
       console.error(e.message);
@@ -209,9 +210,7 @@ class PushAsset extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    ocean: state.ocean,
-    account: state.account,
-    test: state
+    ocean: state.ocean
   };
 };
 

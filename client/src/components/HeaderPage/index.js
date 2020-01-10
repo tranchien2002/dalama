@@ -43,7 +43,7 @@ function HeaderPage() {
         <div id='brand'>
           <div id='logo' />
           <div id='word-mark'>
-            <img src={require('assets/images/word.png')} />
+            <img src={require('assets/images/word.png')} alt='work-mark' />
           </div>
         </div>
         <div id='menu'>

@@ -24,7 +24,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "thunk": "0.0.1",
-    "web3": "^1.2.4"
+    "web3": "^1.2.4",
+    "ipfs-http-client": "^39.0.2"
   },
   "scripts": {
     "start": "NODE_PATH=./src react-scripts start",

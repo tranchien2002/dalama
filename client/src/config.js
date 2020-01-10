@@ -8,3 +8,7 @@ export const brizoAddress =
 export const secretStoreUri =
   process.env.REACT_APP_SECRET_STORE_URI || 'https://secret-store.nile.dev-ocean.com';
 export const faucetUri = process.env.REACT_APP_FAUCET_URI || 'https://faucet.oceanprotocol.com';
+export const ipfsNodeUri =
+  process.env.REACT_APP_IPFS_NODE_URI || 'https://ipfs.oceanprotocol.com/api';
+export const ipfsGatewayUri =
+  process.env.REACT_APP_IPFS_GATEWAY_URI || 'https://ipfs.oceanprotocol.com:443';
