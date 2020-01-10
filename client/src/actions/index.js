@@ -1,6 +1,7 @@
 import getWeb3 from 'utils/getWeb3';
 import { Ocean } from '@oceanprotocol/squid';
 import { aquariusUri, brizoUri, brizoAddress, nodeUri, secretStoreUri } from 'config';
+import firebase from 'utils/configFireBase';
 
 export const WEB3_CONNECT = 'WEB3_CONNECT';
 export const web3Connect = () => async (dispatch) => {
@@ -17,7 +18,8 @@ export const web3Connect = () => async (dispatch) => {
   };
   const ocean = await Ocean.getInstance(config);
   if (web3.currentProvider.networkVersion !== '8995') {
-    alert('Unknown network, please change network to Pacific network');
+    // alert('Unknown network, please change network to Pacific network');
+    alert('Unknown network, please change network to Nile Testnet network');
     return;
   }
   if (accounts.length > 0) {
@@ -33,7 +35,7 @@ export const web3Connect = () => async (dispatch) => {
   }
 };
 
-export const FETCH_ASSET = 'FETCH_ASSET';
+export const FETCH_ASSETS = 'FETCH_ASSETS';
 export const fetchAsset = () => async (dispatch, getState) => {
   const state = getState();
   const ocean = state.ocean;
@@ -49,13 +51,41 @@ export const fetchAsset = () => async (dispatch, getState) => {
   };
   try {
     const search = await ocean.assets.query(searchQuery);
-    debugger;
     console.log('assets', search.results);
     dispatch({
-      type: FETCH_ASSET,
+      type: FETCH_ASSETS,
       allAssets: search.results
     });
   } catch (e) {
     console.log(e);
   }
+};
+
+export const INSERT_DID_TO_USER = 'INSERT_DID_TO_USER';
+export const insertDidToUser = (address, ddo) => async (dispatch) => {
+  firebase
+    .database()
+    .ref('users/' + address + '/' + ddo.id)
+    .set(ddo, function(error) {
+      if (error) {
+        console.log(error);
+      } else {
+        dispatch({
+          type: GET_MY_ASSETS
+        });
+      }
+    });
+};
+
+export const GET_MY_ASSETS = 'GET_MY_ASSETS';
+export const getMyAssets = () => async (dispatch, getState) => {
+  let state = getState();
+  let ref = firebase.database().ref(`users/${state.account}/`);
+  ref.on('value', async (snapshot) => {
+    const myAssets = Object.values((await snapshot.val()) ? await snapshot.val() : {});
+    dispatch({
+      type: GET_MY_ASSETS,
+      myAssets
+    });
+  });
 };

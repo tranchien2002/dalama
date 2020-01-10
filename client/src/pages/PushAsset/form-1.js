@@ -63,14 +63,20 @@ const Form1 = Form.create({ name: 'form_1' })(
         document.getElementById('url').parentElement.classList.remove('has-error');
         var listUrl = this.state.listUrl;
         const file = await this.getLink(url);
-        listUrl.push(file);
-        this.setState(listUrl);
-        this.setState({ typeChooseFile: 2 });
-        this.setState({ typeChooseFile: 1 });
-        this.props.form.setFieldsValue({
-          file: this.state.listUrl
-        });
-        console.log(this.state.listUrl);
+        console.log(file);
+        if (file) {
+          listUrl.push(file);
+          this.setState(listUrl);
+          this.setState({ typeChooseFile: 2 });
+          this.setState({ typeChooseFile: 1 });
+          this.props.form.setFieldsValue({
+            file: this.state.listUrl
+          });
+          console.log(this.state.listUrl);
+          document.getElementById('url').value = '';
+        } else {
+          document.getElementById('url').parentElement.classList.add('has-error');
+        }
       } else {
         document.getElementById('url').parentElement.classList.add('has-error');
       }
@@ -93,32 +99,34 @@ const Form1 = Form.create({ name: 'form_1' })(
               {getFieldDecorator('file', {
                 rules: [{ required: true, message: 'Please input the File of Asset!' }]
               })(<Input className='display-none' />)}
-              {this.state.listUrl.map((file, index) => (
-                <div key={index} className='pl-3'>
-                  <hr />
-                  <div className='row mt-2 mb-2'>
-                    <div className='text-align-left col-10'>
-                      <a href={file.url} target='_blank' rel='noopener noreferrer'>
-                        {file.url}
-                      </a>
+              {this.state.listUrl
+                ? this.state.listUrl.map((file, index) => (
+                    <div key={index} className='pl-3'>
+                      <hr />
+                      <div className='row mt-2 mb-2'>
+                        <div className='text-align-left col-10'>
+                          <a href={file.url} target='_blank' rel='noopener noreferrer'>
+                            {file.url}
+                          </a>
+                        </div>
+                        <div
+                          className='col-2 text-align-right pr-4 cursor-pointer'
+                          onClick={() => {
+                            var listUrl = this.state.listUrl;
+                            listUrl.splice(index, 1);
+                            this.setState({ listUrl });
+                            this.props.form.setFieldsValue({
+                              file: this.state.listUrl
+                            });
+                          }}
+                        >
+                          <Icon type='close-circle' />
+                        </div>
+                      </div>
+                      <hr />
                     </div>
-                    <div
-                      className='col-2 text-align-right pr-4 cursor-pointer'
-                      onClick={() => {
-                        var listUrl = this.state.listUrl;
-                        listUrl.splice(index, 1);
-                        this.setState({ listUrl });
-                        this.props.form.setFieldsValue({
-                          file: this.state.listUrl
-                        });
-                      }}
-                    >
-                      <Icon type='close-circle' />
-                    </div>
-                  </div>
-                  <hr />
-                </div>
-              ))}
+                  ))
+                : null}
             </Form.Item>
             <Tabs
               defaultActiveKey='1'

@@ -95,7 +95,7 @@
         background-repeat: no-repeat;
         height: 8.5rem;
         width: 8.5rem;
-        padding: 2rem;
+        padding: 2.8rem 2rem 2rem 2rem;
         margin-bottom: 0.5rem;
         vertical-align: baseline;
       }
@@ -118,6 +118,10 @@
     }
     margin-bottom: 6rem;
   }
+}
+
+.margin-0-auto {
+  margin: 0 auto;
 }
 
 .btn-submit-asset {

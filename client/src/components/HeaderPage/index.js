@@ -60,7 +60,7 @@ function HeaderPage() {
               <Link to='/new-asset'>Publish</Link>
             </li>
             <li>
-              <Link to='/'>MyAssets</Link>
+              <Link to='/my-assets'>MyAssets</Link>
             </li>
             <li>
               <Link to='/'></Link>
