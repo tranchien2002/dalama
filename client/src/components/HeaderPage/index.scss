@@ -83,14 +83,22 @@ header ul {
   @include object(55px, 55px, $accent);
   border-radius: 50%;
   cursor: pointer;
+  background-image: url('../../assets/images/logo.jpg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 #word-mark {
-  @include object(120px, 20px, $accent);
-  border-radius: 90px;
-  margin-left: 15px;
+  @include object(17%, auto, none);
+  border-radius: 10px;
+  margin-left: 5px;
   opacity: 1;
   transition: all 0.3s;
+  padding: 0.35rem;
+  img {
+    width: 100%;
+  }
 }
 
 /*** Menu Styles ***/
@@ -102,10 +110,15 @@ header ul {
   li {
     margin-left: 20px;
     list-style: none;
-    a {
-      @include object(80px, 20px, $accent);
+    a h3 {
+      @include object(80px, auto, none);
       display: block;
+      color: #324c84;
+      font-weight: bold;
       border-radius: 90px;
+    }
+    a h3:hover {
+      color: #000000;
     }
   }
 }
@@ -149,10 +162,16 @@ header ul {
 
 /*** Hero Section Styles ***/
 #hero-section {
-  background-color: $header-bg;
+  // background-color: $header-bg;
   // @include object(100vw, 70vh, null);
-  padding: 250px 0px 100px 0px;
+  padding: 0px 0px 300px 0px;
   @include center;
+  background-image: url('../../assets/images/wave.webp');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-color: rgb(70, 178, 240);
+  margin-top: 120px;
+  height: 30rem;
 }
 
 #head-line {
@@ -180,12 +199,12 @@ section {
   @include object(100vw, auto, null);
   display: flex;
   justify-content: center;
-  &:nth-child(odd) {
-    background: $pink;
-  }
-  &:nth-child(even) {
-    background: #c9f4f9;
-  }
+  // &:nth-child(odd) {
+  //   background: $pink;
+  // }
+  // &:nth-child(even) {
+  //   background: #c9f4f9;
+  // }
 }
 
 #heading {
@@ -206,6 +225,7 @@ section {
     @include transPos(120px, null, null, null, null, null);
     box-shadow: 0 5px 30px -4px rgba(#000, 0.2);
     transition: all 0.3s;
+    background: #45afed;
     &.showMenu {
       height: 250px;
       left: 0;
@@ -213,6 +233,7 @@ section {
         height: 80px;
         opacity: 1;
         visibility: visible;
+        text-align: left;
       }
     }
   }
@@ -231,6 +252,9 @@ section {
   }
   #head-line {
     transform: scale(0.8);
+  }
+  #word-mark {
+    width: 70%;
   }
 }
 

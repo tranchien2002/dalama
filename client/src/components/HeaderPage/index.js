@@ -42,7 +42,9 @@ function HeaderPage() {
       <nav className={classHeader}>
         <div id='brand'>
           <div id='logo' />
-          <div id='word-mark' />
+          <div id='word-mark'>
+            <img src={require('assets/images/word.png')} />
+          </div>
         </div>
         <div id='menu'>
           <div id='menu-toggle' onClick={handleMenuToggle} className={classMenuToggle}>
@@ -54,16 +56,19 @@ function HeaderPage() {
           </div>
           <ul className={'ul-menu-toggle ' + classShowMenu} id='ul-subMenu'>
             <li>
-              <Link to='/'>Home</Link>
+              <Link to='/'>
+                <h3>Home</h3>
+              </Link>
             </li>
             <li>
-              <Link to='/new-asset'>Publish</Link>
+              <Link to='/new-asset'>
+                <h3>Publish</h3>
+              </Link>
             </li>
             <li>
-              <Link to='/my-assets'>MyAssets</Link>
-            </li>
-            <li>
-              <Link to='/'></Link>
+              <Link to='/my-assets'>
+                <h3>MyAssets</h3>
+              </Link>
             </li>
           </ul>
         </div>

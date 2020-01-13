@@ -1,8 +1,8 @@
 // Input search
 .flex-form input[type='submit'] {
   border-radius: 0 5px 5px 0;
-  background: #ef3f5a;
-  border: 1px solid #ef3f5a;
+  background: rgba(14, 96, 167, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0);
   color: #fff;
   padding: 0 30px;
   cursor: pointer;
@@ -12,8 +12,8 @@
 }
 
 .flex-form input[type='submit']:hover {
-  background: #d73851;
-  border: 1px solid #d73851;
+  background: rgb(0, 82, 158);
+  border: 1px solid rgb(0, 82, 158);
 }
 
 .flex-form input[type='search'] {
@@ -60,7 +60,7 @@ input[type='search'] {
 
 .content-home {
   min-height: 500px;
-  padding: 50px;
+  padding: 0px 50px 50px 50px;
   width: 75%;
   margin: 0 auto;
 }
@@ -73,7 +73,18 @@ input[type='search'] {
   border-radius: 5px;
   padding: 20px;
   box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.01), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  img {
+    height: 150px;
+  }
 }
+
+// .image-waves {
+//   background-image: url('../../assets/images/wave.webp');
+//   background-repeat: no-repeat;
+//   background-size: 100% 100%;
+//   background-color: rgba(2, 78, 128, 0.93);
+//   height: 30rem;
+// }
 
 @media all and (max-width: 768px) {
   .content-home {
