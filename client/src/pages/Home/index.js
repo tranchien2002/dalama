@@ -17,6 +17,7 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [assetsPagination, setAssetsPagination] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     async function fetWeb3Asset() {
@@ -49,12 +50,22 @@ function Home() {
     );
   };
 
+  let search = async (e) => {
+    e.preventDefault();
+    await dispatch(actions.searchAssets(searchTerm));
+  };
+
   return (
     <div>
       <div id='hero-section'>
         <form className='flex-form'>
-          <input type='search' placeholder='What assets do you need to find?' />
-          <input type='submit' value='Search' />
+          <input
+            type='search'
+            placeholder='What assets do you need to find?'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <input type='submit' value='Search' onClick={search} />
         </form>
       </div>
       <section id='section00'>
