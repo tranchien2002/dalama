@@ -76,6 +76,22 @@ export const insertDidToUser = (address, ddo) => async (dispatch) => {
     });
 };
 
+export const INSERT_LABELED_DATA = 'INSERT_LABELED_DATA';
+export const insertLabeledData = (didAsset, ddo) => async (dispatch) => {
+  firebase
+    .database()
+    .ref('details/' + didAsset + '/' + ddo.id)
+    .set(ddo, function(e) {
+      if (e) {
+        console.log(e);
+      } else {
+        dispatch({
+          type: GET_MY_ASSETS
+        });
+      }
+    });
+};
+
 export const GET_MY_ASSETS = 'GET_MY_ASSETS';
 export const getMyAssets = () => async (dispatch, getState) => {
   let state = getState();
