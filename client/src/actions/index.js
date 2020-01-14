@@ -51,7 +51,6 @@ export const fetchAsset = () => async (dispatch, getState) => {
   };
   try {
     const search = await ocean.assets.query(searchQuery);
-    console.log('assets', search.results);
     dispatch({
       type: FETCH_ASSETS,
       allAssets: search.results

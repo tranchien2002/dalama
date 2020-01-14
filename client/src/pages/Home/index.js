@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from 'actions';
 import './index.scss';
-import { Card, Col, Row, Icon, Spin } from 'antd';
+import { Card, Col, Row, Icon, Spin, Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 
 const { Meta } = Card;
@@ -15,6 +15,8 @@ function Home() {
   }));
 
   const [loading, setLoading] = useState(false);
+  const [assetsPagination, setAssetsPagination] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function fetWeb3Asset() {
@@ -22,10 +24,22 @@ function Home() {
       await dispatch(actions.web3Connect());
       await dispatch(actions.fetchAsset());
       setLoading(false);
-      console.log(listAssets);
     }
     fetWeb3Asset();
   }, [dispatch]);
+
+  useEffect(() => {
+    paginationAssets(currentPage);
+  }, [currentPage, listAssets]);
+
+  let paginationAssets = async (page) => {
+    setCurrentPage(page);
+    let startRecord = (page - 1) * 9;
+    let endRecord = startRecord + 8;
+    setAssetsPagination(
+      listAssets.filter((data, index) => index >= startRecord && index <= endRecord)
+    );
+  };
 
   return (
     <div>
@@ -39,7 +53,7 @@ function Home() {
         <div className='content-home'>
           <Spin spinning={loading} indicator={antIcon}>
             <Row gutter={16}>
-              {listAssets.map((item, index) => (
+              {assetsPagination.map((item, index) => (
                 <Link key={index} to={'detail/' + item.id}>
                   <Col xs={24} sm={12} md={12} lg={8} className='col-card-home'>
                     <Card
@@ -48,7 +62,6 @@ function Home() {
                       cover={
                         <img
                           alt='example'
-                          height='181px'
                           src={
                             index % 2 === 0
                               ? require('assets/images/images-default-2.png')
@@ -69,10 +82,16 @@ function Home() {
                 </Link>
               ))}
             </Row>
+            <Pagination
+              defaultCurrent={1}
+              total={listAssets ? listAssets.length : 0}
+              onChange={paginationAssets}
+              pageSize={9}
+              showTotal={(total) => `Total ${total} items`}
+            />
           </Spin>
         </div>
       </section>
-      {/* <FooterPage /> */}
     </div>
   );
 }

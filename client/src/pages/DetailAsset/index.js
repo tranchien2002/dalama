@@ -196,7 +196,12 @@ class DetailAsset extends Component {
       });
       console.log('path', path);
     } catch (error) {
-      alert(error);
+      alert(error.message);
+      this.setState({
+        btnLoading: this.state.btnLoading.filter(function(ele) {
+          return ele != index;
+        })
+      });
     }
   };
 
