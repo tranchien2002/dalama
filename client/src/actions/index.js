@@ -47,7 +47,7 @@ export const fetchAsset = () => async (dispatch, getState) => {
   const ocean = state.ocean;
   const searchQuery = {
     query: {
-      categories: ['Biology']
+      categories: ['label']
     },
     sort: {
       created: -1
@@ -70,7 +70,7 @@ export const searchAssets = (text) => async (dispatch, getState) => {
   const ocean = state.ocean;
   let searchQuery = {
     query: {
-      categories: ['Biology'],
+      categories: ['label'],
       text: text
     },
     sort: {
@@ -80,7 +80,7 @@ export const searchAssets = (text) => async (dispatch, getState) => {
   if (!text) {
     searchQuery = {
       query: {
-        categories: ['Biology']
+        categories: ['label']
       },
       sort: {
         created: -1

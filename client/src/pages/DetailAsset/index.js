@@ -465,7 +465,7 @@ class DetailAsset extends Component {
               : null}
           </div>
           <div className='detail-upload'>
-            <h1 className='text-align-left'>Exchange - Comment</h1>
+            <h1 className='text-align-left'>Exchange</h1>
             <Tabs defaultActiveKey='1'>
               <TabPane
                 tab={

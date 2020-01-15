@@ -121,7 +121,7 @@ class PushAsset extends Component {
       additionalInformation: Object.assign(AssetModel.additionalInformation, {
         description: this.state.newAsset.description,
         copyrightHolder: this.state.newAsset.copyrightHolder,
-        categories: [this.state.newAsset.category, 'dalama']
+        categories: [this.state.newAsset.category, 'label']
       })
     };
     try {
