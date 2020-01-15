@@ -40,8 +40,6 @@ export const fetchAsset = () => async (dispatch, getState) => {
   const state = getState();
   const ocean = state.ocean;
   const searchQuery = {
-    offset: 30,
-    page: 1,
     query: {
       categories: ['Biology']
     },
@@ -51,6 +49,42 @@ export const fetchAsset = () => async (dispatch, getState) => {
   };
   try {
     const search = await ocean.assets.query(searchQuery);
+    dispatch({
+      type: FETCH_ASSETS,
+      allAssets: search.results
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const SEARCH_ASSETS = 'SEARCH_ASSETS';
+export const searchAssets = (text) => async (dispatch, getState) => {
+  const state = getState();
+  const ocean = state.ocean;
+  let searchQuery = {
+    query: {
+      categories: ['Biology'],
+      text: text
+    },
+    sort: {
+      created: -1
+    }
+  };
+  if (!text) {
+    searchQuery = {
+      query: {
+        categories: ['Biology']
+      },
+      sort: {
+        created: -1
+      }
+    };
+  }
+
+  try {
+    const search = await ocean.assets.query(searchQuery);
+    debugger;
     dispatch({
       type: FETCH_ASSETS,
       allAssets: search.results
