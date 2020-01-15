@@ -116,8 +116,8 @@ const Form1 = Form.create({ name: 'form_1' })(
       if (file) {
         listUrl.push(file);
         this.setState(listUrl);
-        this.setState({ typeChooseFile: 2 });
         this.setState({ typeChooseFile: 1 });
+        this.setState({ typeChooseFile: 2 });
         this.props.form.setFieldsValue({
           file: this.state.listUrl
         });
@@ -222,7 +222,7 @@ const Form1 = Form.create({ name: 'form_1' })(
                 key='2'
               >
                 {this.state.typeChooseFile === 2 ? (
-                  <input type='file' onChange={this.uploadIpfs} />
+                  <input type='file' onChange={this.uploadIpfs} id='upload-ipfs' />
                 ) : null}
               </TabPane>
             </Tabs>

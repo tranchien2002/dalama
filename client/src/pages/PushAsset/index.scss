@@ -39,6 +39,21 @@
   max-height: none;
 }
 
+#upload-ipfs {
+  display: inline-block;
+  width: 250px;
+  padding: 40px 0 0 0;
+  height: 40px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: url('../../assets/images/698394-icon-130-cloud-upload-512.png') center center
+    no-repeat #ffffff;
+  border-radius: 5px;
+  background-size: 45px 45px;
+  cursor: pointer;
+  border: 1px solid #d8d8d8;
+}
+
 @media all and (max-width: 768px) {
   .content-new {
     padding-top: 170px;

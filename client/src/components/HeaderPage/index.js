@@ -32,7 +32,9 @@ function HeaderPage() {
           document.getElementById('ul-subMenu').classList.add('top-100');
         } else {
           setClassHeader('');
-          document.getElementById('ul-subMenu').classList.remove('top-100');
+          if (document.getElementById('ul-subMenu')) {
+            document.getElementById('ul-subMenu').classList.remove('top-100');
+          }
         }
       });
     };
@@ -88,12 +90,10 @@ function HeaderPage() {
             </li>
             <li>
               <Dropdown overlay={menu}>
-                <p className='ant-dropdown-link'>
-                  <h3 id='my-account'>
-                    My Account
-                    <Icon type='down' />
-                  </h3>
-                </p>
+                <h3 id='my-account'>
+                  My Account
+                  <Icon type='down' />
+                </h3>
               </Dropdown>
             </li>
           </ul>
