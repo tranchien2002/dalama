@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Menu, Dropdown, Icon } from 'antd';
 import './index.scss';
 
 function HeaderPage() {
@@ -7,6 +9,20 @@ function HeaderPage() {
   const [classShowMenu, setClassShowMenu] = useState('');
   const [classMenuToggle, setClassMenuToggle] = useState('');
   const [menuToggle, setMenuToggle] = useState(true);
+
+  let { account, eth, ocn } = useSelector((state) => ({
+    account: state.account,
+    eth: state.eth,
+    ocn: state.ocn
+  }));
+
+  const menu = (
+    <Menu>
+      <Menu.Item key='1'>Account: {account}</Menu.Item>
+      <Menu.Item key='2'>Eth: {eth}</Menu.Item>
+      <Menu.Item key='3'>Ocean: {ocn}</Menu.Item>
+    </Menu>
+  );
 
   useEffect(() => {
     let scrollPage = () => {
@@ -69,6 +85,16 @@ function HeaderPage() {
               <Link to='/my-assets'>
                 <h3>MyAssets</h3>
               </Link>
+            </li>
+            <li>
+              <Dropdown overlay={menu}>
+                <p className='ant-dropdown-link'>
+                  <h3 id='my-account'>
+                    My Account
+                    <Icon type='down' />
+                  </h3>
+                </p>
+              </Dropdown>
             </li>
           </ul>
         </div>

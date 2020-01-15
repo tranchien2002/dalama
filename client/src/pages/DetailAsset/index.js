@@ -94,7 +94,12 @@ class DetailAsset extends Component {
         let allFileNames = [];
         zip.forEach(function(relativePath, zipEntry) {
           // _ la MACOS auto file
-          if (zipEntry.name[0] !== '_' && zipEntry.name.includes('.jpeg')) {
+          if (
+            zipEntry.name[0] !== '_' &&
+            (zipEntry.name.includes('.jpeg') ||
+              zipEntry.name.includes('.png') ||
+              zipEntry.name.includes('.txt'))
+          ) {
             allFileNames.push(zipEntry.name);
           }
         });
@@ -177,12 +182,13 @@ class DetailAsset extends Component {
         name: this.state.detailAsset.service['0'].attributes.main.name + ' labeled',
         type: 'dataset',
         dateCreated: new Date().toISOString().split('.')[0] + 'Z',
-        price: this.state.price,
+        price: (this.state.price * 10 ** 18).toString(),
         files: files
       },
       additionalInformation: {
         ...LabeledModel.additionalInformation,
-        demo: this.state.urlGateway
+        demo: this.state.urlGateway,
+        description: this.state.description
       }
     };
     try {

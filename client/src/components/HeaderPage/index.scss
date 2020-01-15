@@ -269,3 +269,11 @@ section {
 .top-100 {
   top: 100px;
 }
+
+#my-account {
+  width: 120px !important;
+}
+
+#my-account:hover {
+  cursor: pointer;
+}
