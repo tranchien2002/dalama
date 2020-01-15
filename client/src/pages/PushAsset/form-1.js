@@ -1,7 +1,10 @@
 import React from 'react';
-import { Button, Icon, Form, Input, Tabs, Upload } from 'antd';
+import { Button, Icon, Form, Input, Tabs } from 'antd';
 import axios from 'axios';
 import cleanupContentType from 'utils/cleanUpContentType.js';
+import { streamFiles } from 'utils/checkFileUpload.js';
+import { ipfsNodeUri } from 'config.js';
+import getIpfs from 'utils/getIpfs';
 
 const { TabPane } = Tabs;
 
@@ -55,15 +58,31 @@ const Form1 = Form.create({ name: 'form_1' })(
       }
     };
 
-    addLink = async () => {
-      let url = document.getElementById('url').value;
+    addToIpfs = async (data) => {
+      try {
+        const { hostname, port, protocol } = new URL(ipfsNodeUri);
+        const ipfsConfig = {
+          protocol: protocol.replace(':', ''),
+          host: hostname,
+          port: port || '443'
+        };
+        const { ipfs, ipfsVersion, ipfsMessage } = await getIpfs(ipfsConfig);
+        console.log(ipfs, ipfsVersion, ipfsMessage);
+        const cid = await streamFiles(ipfs, data);
+        console.log(`File added: ${cid}`);
+        return cid;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getFile = async (url) => {
       var expression = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/;
       var regex = new RegExp(expression);
       if (regex.test(url)) {
         document.getElementById('url').parentElement.classList.remove('has-error');
         var listUrl = this.state.listUrl;
         const file = await this.getLink(url);
-        console.log(file);
         if (file) {
           listUrl.push(file);
           this.setState(listUrl);
@@ -80,6 +99,34 @@ const Form1 = Form.create({ name: 'form_1' })(
       } else {
         document.getElementById('url').parentElement.classList.add('has-error');
       }
+    };
+
+    addLink = async () => {
+      let url = document.getElementById('url').value;
+      await this.getFile(url);
+    };
+
+    uploadIpfs = async (e) => {
+      let dataFile = e.target.files[0];
+      this.props.loadingFunc(true);
+      let data_cid = await this.addToIpfs({ path: dataFile.name, content: dataFile });
+      let url = `ipfs://${data_cid}/${dataFile.name}`;
+      var listUrl = this.state.listUrl;
+      const file = await this.getLink(url);
+      if (file) {
+        listUrl.push(file);
+        this.setState(listUrl);
+        this.setState({ typeChooseFile: 2 });
+        this.setState({ typeChooseFile: 1 });
+        this.props.form.setFieldsValue({
+          file: this.state.listUrl
+        });
+        console.log(this.state.listUrl);
+      } else {
+        console.log('error upload ipfs');
+      }
+      this.props.loadingFunc(false);
+      console.log('cid', `ipfs://${data_cid}/${dataFile.name}`);
     };
 
     render() {
@@ -175,11 +222,7 @@ const Form1 = Form.create({ name: 'form_1' })(
                 key='2'
               >
                 {this.state.typeChooseFile === 2 ? (
-                  <Upload>
-                    <Button>
-                      <Icon type='upload' /> Upload
-                    </Button>
-                  </Upload>
+                  <input type='file' onChange={this.uploadIpfs} />
                 ) : null}
               </TabPane>
             </Tabs>
