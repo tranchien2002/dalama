@@ -33,7 +33,8 @@ class PushAsset extends Component {
         copyrightHolder: '',
         license: ''
       },
-      loading: false
+      loading: false,
+      nextLoading: false
     };
   }
 
@@ -127,8 +128,8 @@ class PushAsset extends Component {
       // this.setState({ loading: true });
       const accounts = await this.props.ocean.accounts.list();
       const asset = await this.props.ocean.assets.create(newAsset, accounts[0]);
-      console.log('asset', asset);
       store.dispatch(actions.insertDidToUser(accounts[0].id, asset));
+      localStorage.removeItem('newAsset');
       message.success('Processing complete!');
       this.props.history.push('/my-assets');
       // this.setState({ loading: false });
@@ -136,6 +137,10 @@ class PushAsset extends Component {
       this.setState({ loading: false });
       console.error(e.message);
     }
+  };
+
+  setNextLoading = async (loading) => {
+    this.setState({ nextLoading: loading });
   };
 
   render() {
@@ -160,6 +165,7 @@ class PushAsset extends Component {
                   wrappedComponentRef={this.refForm1}
                   title={this.state.newAsset.title}
                   file={this.state.newAsset.files}
+                  loadingFunc={this.setNextLoading}
                 />
               </div>
               <div
@@ -191,7 +197,11 @@ class PushAsset extends Component {
                   </Button>
                 )}
                 {current < 3 - 1 && (
-                  <Button type='primary' onClick={() => this.next()}>
+                  <Button
+                    type='primary'
+                    onClick={() => this.next()}
+                    loading={this.state.nextLoading}
+                  >
                     Next <Icon type='arrow-right' />
                   </Button>
                 )}
