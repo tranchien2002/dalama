@@ -104,7 +104,7 @@ header ul {
 /*** Menu Styles ***/
 #menu {
   justify-content: flex-end;
-  padding-right: 25px;
+  padding-right: 100px;
 }
 .ul-menu-toggle {
   li {
@@ -256,6 +256,10 @@ section {
   #word-mark {
     width: 70%;
   }
+
+  #menu {
+    padding-right: 25px;
+  }
 }
 
 #youtube {
@@ -272,6 +276,8 @@ section {
 
 #my-account {
   width: 120px !important;
+  font-weight: bold;
+  color: #324c84;
 }
 
 #my-account:hover {

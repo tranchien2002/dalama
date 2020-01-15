@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import './index.scss';
-import { Layout, Button, Comment, Avatar, Input, List, Form, Tabs, Icon, message } from 'antd';
+import { Layout, Button, Comment, Avatar, List, Tabs, Icon, message } from 'antd';
 import { Card, Spin } from 'antd';
-import moment from 'moment';
 import store from 'store';
 import * as actions from 'actions';
 import filesize from 'filesize';
@@ -14,10 +13,12 @@ import getIpfs from 'utils/getIpfs';
 import LabeledModel from 'models/LabeledModel';
 import axios from 'axios';
 import cleanupContentType from 'utils/cleanUpContentType.js';
+import FormComment from './form-comment';
+import firebase from 'utils/configFireBase';
+
 var JSZip = require('jszip');
 
 const { Content } = Layout;
-const { TextArea } = Input;
 const { TabPane } = Tabs;
 
 const antIcon = <Icon type='loading' style={{ fontSize: 30 }} spin />;
@@ -35,20 +36,7 @@ class DetailAsset extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      comments: [
-        {
-          author: 'Han Solo',
-          avatar: <Avatar style={{ backgroundColor: '#87d068' }} icon='user' />,
-          content: (
-            <p>
-              We supply a series of design principles, practical patterns and high quality design
-              resources (Sketch and Axure), to help people create their product prototypes
-              beautifully and efficiently.
-            </p>
-          ),
-          datetime: moment().fromNow()
-        }
-      ],
+      comments: [],
       submitting: false,
       price: '',
       description: '',
@@ -132,7 +120,8 @@ class DetailAsset extends Component {
         });
       },
       function(e) {
-        this.setState({ loadingFile: false });
+        console.log(e);
+        context.setState({ loadingFile: false });
         alert('error while read file');
       }
     );
@@ -170,38 +159,42 @@ class DetailAsset extends Component {
   };
 
   handleSubmit = async () => {
-    let files = [];
-    const file = await this.getLink(this.state.urlData);
-    if (file) {
-      files.push(file);
-    }
-    files = files.map(({ found, ...keepAttrs }) => keepAttrs);
-    const newData = {
-      main: {
-        ...LabeledModel.main,
-        name: this.state.detailAsset.service['0'].attributes.main.name + ' labeled',
-        type: 'dataset',
-        dateCreated: new Date().toISOString().split('.')[0] + 'Z',
-        price: (this.state.price * 10 ** 18).toString(),
-        files: files
-      },
-      additionalInformation: {
-        ...LabeledModel.additionalInformation,
-        demo: this.state.urlGateway,
-        description: this.state.description
+    let res = await this.checkFormComment();
+    if (!res) {
+      let files = [];
+      const file = await this.getLink(this.state.urlData);
+      if (file) {
+        files.push(file);
       }
-    };
-    try {
-      this.setState({ loading: true });
-      const accounts = await this.props.ocean.accounts.list();
-      const asset = await this.props.ocean.assets.create(newData, accounts[0]);
-      store.dispatch(actions.insertLabeledData(this.props.match.params.did, asset));
-      console.log(asset);
-      this.setState({ loading: false });
-      message.success('Processing complete!');
-    } catch (e) {
-      this.setState({ loading: false });
-      console.error(e);
+      files = files.map(({ found, ...keepAttrs }) => keepAttrs);
+      const newData = {
+        main: {
+          ...LabeledModel.main,
+          name: this.state.detailAsset.service['0'].attributes.main.name + ' labeled',
+          type: 'dataset',
+          dateCreated: new Date().toISOString().split('.')[0] + 'Z',
+          price: (this.state.price * 10 ** 18).toString(),
+          files: files
+        },
+        additionalInformation: {
+          ...LabeledModel.additionalInformation,
+          demo: this.state.urlGateway,
+          description: this.state.description
+        }
+      };
+      try {
+        this.setState({ loading: true });
+        const accounts = await this.props.ocean.accounts.list();
+        const asset = await this.props.ocean.assets.create(newData, accounts[0]);
+        store.dispatch(actions.insertLabeledData(this.props.match.params.did, asset));
+        console.log(asset);
+        this.getComments(this.state.detailAsset.id);
+        this.setState({ loading: false });
+        message.success('Processing complete!');
+      } catch (e) {
+        this.setState({ loading: false });
+        console.error(e);
+      }
     }
   };
 
@@ -258,18 +251,124 @@ class DetailAsset extends Component {
     }
   };
 
+  purchaseLabelData = async (ddo, index) => {
+    const ocean = this.props.ocean;
+    this.setState({ loading: true });
+    try {
+      const accounts = await ocean.accounts.list();
+      const service = ddo.service[1];
+      const agreements = await ocean.keeper.conditions.accessSecretStoreCondition.getGrantedDidByConsumer(
+        accounts[0].id
+      );
+      const agreement = agreements.find((element) => {
+        return element.did === ddo.id;
+      });
+      let agreementId;
+      if (agreement) {
+        ({ agreementId } = agreement);
+      } else {
+        agreementId = await ocean.assets.order(ddo.id, service.index, accounts[0]);
+      }
+      const path = await ocean.assets.consume(
+        agreementId,
+        ddo.id,
+        service.index,
+        accounts[0],
+        '',
+        index
+      );
+      this.setState({ loading: false });
+      console.log('path', path);
+    } catch (error) {
+      alert(error.message);
+      this.setState({ loading: false });
+    }
+  };
+
   async componentDidMount() {
     let did = this.props.match.params.did;
     this.setState({ loading: true });
     await store.dispatch(actions.web3Connect());
     let asset = await this.props.ocean.assets.resolve(did);
+    this.getComments(asset.id);
     this.setState({ loading: false, detailAsset: asset });
   }
+
+  refFormComment = (formRef) => {
+    this.formCommentRef = formRef;
+  };
+
+  checkFormComment = async () => {
+    let propsForm = this.formCommentRef.props;
+    const { form } = propsForm;
+    let res;
+    form.validateFields((err, values) => {
+      if (err) {
+        res = err;
+        return;
+      }
+    });
+    return res;
+  };
+
+  getComments = (didAsset) => {
+    let ref = firebase.database().ref(`details/${didAsset}/`);
+    ref.on('value', async (snapshot) => {
+      const listDDo = Object.values((await snapshot.val()) ? await snapshot.val() : {});
+      console.log(listDDo);
+      let comments = [];
+      listDDo.map((ddo, index) => {
+        let comment = {
+          author: ddo.proof.creator,
+          avatar: <Avatar style={{ backgroundColor: '#87d068' }} icon='user' />,
+          content: (
+            <div className='content-comment' key={index}>
+              <p>{ddo.service[0].attributes.additionalInformation.description}</p>
+              <Card className='content-file'>
+                <div className='row'>
+                  <div className='col-md-6 margin-0-auto text-align-center'>
+                    <Button
+                      type='primary'
+                      icon='download'
+                      className='mb-2'
+                      onClick={() => {
+                        this.purchaseLabelData(ddo, index || 0);
+                      }}
+                    >
+                      Assset Full
+                    </Button>
+                    <p className='text-align-center'>
+                      <b>
+                        Price: {parseInt(ddo.service[0].attributes.main.price) / 10 ** 18} OCEAN
+                      </b>
+                    </p>
+                  </div>
+                  <div className='col-md-6 margin-0-auto text-align-center'>
+                    <a href={ddo.service[0].attributes.additionalInformation.demo}>
+                      <Button type='primary' icon='download' className='mb-2'>
+                        Assset Demo
+                      </Button>
+                    </a>
+                    <p className='text-align-center'>
+                      <b>Price: Free</b>
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          ),
+          datetime: ddo.created
+        };
+        comments.push(comment);
+      });
+      console.log(comments);
+      this.setState({ comments: comments });
+    });
+  };
 
   render() {
     const { comments } = this.state;
     const { loading, detailAsset } = this.state;
-
     return (
       <Spin spinning={loading} indicator={antIcon}>
         <Content className='content-detail'>
@@ -377,33 +476,13 @@ class DetailAsset extends Component {
                 }
                 key='1'
               >
-                <Card className='text-align-left'>
-                  <div className='row'>
-                    <div className='col-md-6'>
-                      <p>{this.state.urlData ? 'Uploaded: ' + this.state.urlData : ''}</p>
-                      <Form.Item label='Price Asset'>
-                        <Input
-                          type='number'
-                          prefix={<Icon type='dollar' theme='twoTone' />}
-                          placeholder=' 0.5 (Ocean Token)'
-                          onChange={this.handlePrice}
-                          value={this.state.price}
-                        />
-                      </Form.Item>
-                      <Form.Item label='Description'>
-                        <TextArea
-                          row='8'
-                          placeholder='Description for data submit'
-                          onChange={this.handleDesc}
-                          value={this.state.description}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className='col-md-8'>
-                      <input type='file' onChange={this.handleUpload} />
-                    </div>
-                  </div>
-                </Card>
+                <FormComment
+                  wrappedComponentRef={this.refFormComment}
+                  handlePrice={this.handlePrice}
+                  handleDesc={this.handleDesc}
+                  handleUpload={this.handleUpload}
+                  linkFileDemo={this.state.urlData ? this.state.urlData : ''}
+                />
                 <div className='btn-submit-asset'>
                   <Button
                     type='primary'
@@ -422,7 +501,6 @@ class DetailAsset extends Component {
     );
   }
 }
-
 const mapStateToProps = (state) => {
   return {
     ocean: state.ocean

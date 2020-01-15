@@ -82,31 +82,6 @@
       }
     }
   }
-  .detail-files {
-    margin-top: 2rem;
-    padding: 2rem;
-    .detail-files-file {
-      width: 8.5rem;
-      margin: 0 auto;
-      margin-bottom: 3rem;
-      .detail-files-file-capacity {
-        background-image: url('../../assets/images/file-default.png');
-        background-size: 100%;
-        background-repeat: no-repeat;
-        height: 8.5rem;
-        width: 8.5rem;
-        padding: 2.8rem 2rem 2rem 2rem;
-        margin-bottom: 0.5rem;
-        vertical-align: baseline;
-      }
-      p {
-        font-size: 0.9rem;
-        margin-bottom: 0;
-        font-weight: bold;
-        text-align: left;
-      }
-    }
-  }
   .detail-upload {
     text-align: left;
     & p {
@@ -119,6 +94,35 @@
     margin-bottom: 6rem;
   }
 }
+.detail-files {
+  margin-top: 2rem;
+  padding: 2rem;
+}
+
+.detail-files-file-capacity {
+  background-image: url('../../assets/images/file-default.png');
+  background-size: 100%;
+  background-repeat: no-repeat;
+  height: 8.5rem;
+  width: 8.5rem;
+  padding: 2.8rem 2rem 2rem 2rem;
+  margin-bottom: 0.5rem;
+  vertical-align: baseline;
+}
+
+.detail-files-file {
+  width: 8.5rem;
+  margin: 0 auto;
+  margin-bottom: 3rem;
+  text-align: center;
+
+  p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    font-weight: bold;
+    text-align: left;
+  }
+}
 
 .margin-0-auto {
   margin: 0 auto;
@@ -126,6 +130,30 @@
 
 .btn-submit-asset {
   padding: 1rem;
+}
+
+.padding-bottom-0 {
+  padding-bottom: 0;
+}
+
+.content-file {
+  .ant-card-body {
+    padding: 10px;
+  }
+}
+
+#form-comment_file {
+  display: inline-block;
+  width: 250px;
+  padding: 40px 0 0 0;
+  height: 40px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: url('../../assets/images/698394-icon-130-cloud-upload-512.png') center center
+    no-repeat #ffffff;
+  border-radius: 5px;
+  background-size: 45px 45px;
+  cursor: pointer;
 }
 
 @media all and (max-width: 768px) {

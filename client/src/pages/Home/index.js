@@ -106,7 +106,6 @@ function Home() {
               total={listAssets ? listAssets.length : 0}
               onChange={paginationAssets}
               pageSize={9}
-              showTotal={(total) => `Total ${total} items`}
             />
           </Spin>
         </div>

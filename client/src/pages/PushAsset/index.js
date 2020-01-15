@@ -128,6 +128,7 @@ class PushAsset extends Component {
       // this.setState({ loading: true });
       const accounts = await this.props.ocean.accounts.list();
       const asset = await this.props.ocean.assets.create(newAsset, accounts[0]);
+      console.log('asset', asset);
       store.dispatch(actions.insertDidToUser(accounts[0].id, asset));
       localStorage.removeItem('newAsset');
       message.success('Processing complete!');
