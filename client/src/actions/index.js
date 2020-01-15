@@ -17,8 +17,12 @@ export const web3Connect = () => async (dispatch) => {
     verbose: true
   };
   const ocean = await Ocean.getInstance(config);
+  let ocn_accounts = await ocean.accounts.list();
+  let ocn_account = ocn_accounts[0];
+  let ocn_balance = await ocn_account.getBalance();
+  let { eth, ocn } = ocn_balance;
+  eth = eth / 10 ** 18;
   if (web3.currentProvider.networkVersion !== '8995') {
-    // alert('Unknown network, please change network to Pacific network');
     alert('Unknown network, please change network to Nile Testnet network');
     return;
   }
@@ -28,7 +32,9 @@ export const web3Connect = () => async (dispatch) => {
       type: WEB3_CONNECT,
       web3,
       account,
-      ocean
+      ocean,
+      eth,
+      ocn
     });
   } else {
     console.log('Account not found');
