@@ -21,3 +21,9 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+#deploy
+build
+.firebase/*
+firebase.json
+.firebaserc
